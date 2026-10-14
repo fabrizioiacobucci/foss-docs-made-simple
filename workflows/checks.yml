@@ -1,0 +1,30 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      # Pinned to the commit of v7.0.1. fetch-depth 0 also fetches the tags,
+      # which scripts/check-copies.sh reads the framework documents at.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Test the check scripts
+        run: scripts/tests/run.sh
+      - name: Check the relative links
+        run: scripts/check-links.sh
+      - name: Check the copied framework documents
+        run: scripts/check-copies.sh
