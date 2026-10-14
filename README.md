@@ -38,7 +38,7 @@ A release can be made only when every required document exists ([framework/DEFIN
 ## This repository
 
 - How to report a bug, propose a change or contribute: [CONTRIBUTING.md](CONTRIBUTING.md); discussion happens in the issues and pull requests.
-- The framework documents are in `framework/`. The project documents of this repository are `README.md`, `CONTRIBUTING.md`, `SECURITY.md` and `LICENSE` in its root, and the others in `docs/`.
+- The framework documents are in `framework/`. The project documents of this repository are `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `AGENTS.md` and `LICENSE` in its root, and the others in `docs/`.
 - What changed between framework tags: [docs/CHANGELOG.md](docs/CHANGELOG.md).
 - This repository follows foss-docs-made-simple itself, at framework tag `v0.1.0`; its level is recorded in its [CHECKLIST](docs/CHECKLIST.md).
 
