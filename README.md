@@ -20,7 +20,7 @@ A release can be made only when every required document exists ([framework/DEFIN
 
 **Choosing a level.** The levels nest: an adopter at silver or gold has the documents of the levels below as well ([framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md)). Gold asks for rules that need more than one person, such as the review, before release, of at least half of the changes by someone other than their author; the badge itself asks, at gold, for at least two unassociated significant contributors.
 
-**Other rules.** Projects that adopt the same framework tag follow the same rules. An adopter can set additions, listed in its project `GOVERNANCE` ([framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md)), and record exceptions, as [framework/GOVERNANCE.md](framework/GOVERNANCE.md) says; an adopter that needs other rules can fork this repository and follow its fork instead.
+**Other rules.** Projects that adopt the same framework tag follow the same rules. An adopter can set additions, listed in its project `GOVERNANCE` ([framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md)), and record exceptions, as [framework/GOVERNANCE.md](framework/GOVERNANCE.md) says; an adopter that needs other rules can fork this repository and follow its fork instead. An adopter can report a need, or an exception it has logged, in the [issues](https://github.com/fabrizioiacobucci/foss-docs-made-simple/issues), so that the maintainers can weigh it for a later framework tag ([CONTRIBUTING](CONTRIBUTING.md#rules-for-changing-the-framework)).
 
 ## The framework
 

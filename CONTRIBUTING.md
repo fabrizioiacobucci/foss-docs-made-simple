@@ -29,7 +29,7 @@ Every change to a framework document MUST meet these rules before it is merged:
 - **Terms.** Each term defined in [framework/GLOSSARY.md](framework/GLOSSARY.md) is used in its canonical form, never one of its "Avoid" synonyms.
 - **References.** Every link resolves, and every project document named exists in [framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md).
 - **Dependents.** When a change alters a rule, every framework document that relies on that rule is re-read against these rules in the same change.
-- **Nothing ahead of need.** Nothing is added before an adopter needs it, and the simplest form that works is chosen.
+- **Nothing ahead of need.** Nothing is added before an adopter needs it, and the simplest form that works is chosen. A need is shown by a criterion of the OpenSSF Best Practices Badge, by a law or a standard that [docs/ROADMAP.md](docs/ROADMAP.md) plans to cover, by a defect of the framework, such as an ambiguity or a contradiction, or by an adopter's case reported in the issues. When adopters report exceptions to the same rule, the maintainers re-read the rule, and MAY make it weaker only as far as the "Badge strength" and "Sources" rules allow.
 - **Third-party text.** The framework links to third-party works where it uses them and does not copy their text beyond short quotations (see the [README](README.md#licence)).
 - **Names.** A new project document is named in capitals with hyphens, such as `THREAT-MODEL`; a file that GitHub reads by name keeps the name GitHub expects, such as `CODE_OF_CONDUCT`.
 - **Citations.** A framework document names:
