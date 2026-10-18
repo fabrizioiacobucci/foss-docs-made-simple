@@ -6,7 +6,7 @@ All notable changes to the framework, by framework tag. The format follows [Keep
 
 ### Added
 
-- In [DEFINITION-OF-DONE](../framework/DEFINITION-OF-DONE.md#changes), the cases in which an adopter SHOULD treat an architectural decision as significant, and so include its ADR in the change. This change would be major: an adopter that judges significance in another way logs an exception in its `CHECKLIST`, as [GOVERNANCE](../framework/GOVERNANCE.md#records) says. The rule applies to the changes made after the move to the new framework tag, and asks for no ADR of past decisions.
+- In [DEFINITION-OF-DONE](../framework/DEFINITION-OF-DONE.md#changes), which decisions an adopter SHOULD treat as significant architectural decisions, and so document in an ADR included in the change: those that affect the structure, the quality characteristics, the dependencies, the interfaces or the construction techniques of the software. This change would be major: an adopter that judges significance in another way logs an exception in its `CHECKLIST`, as [GOVERNANCE](../framework/GOVERNANCE.md#records) says. The rule applies to the changes made after the move to the new framework tag, and asks for no ADR of past decisions.
 - In the [README](../README.md#adopting-the-framework), how an adopter reports a need, or an exception it has logged, to the maintainers.
 
 ## [0.1.0] - 2026-10-14

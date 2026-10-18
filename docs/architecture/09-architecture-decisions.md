@@ -11,4 +11,4 @@ ADRs 0001 to 0003 record decisions made before this repository followed the fram
 | [0003](../adr/0003-framework-documents-in-framework-folder.md) | Keep the framework documents in `framework/`, so that `docs/` follows the default layout |
 | [0004](../adr/0004-semantic-versioning-of-framework-tags.md) | Number framework tags with Semantic Versioning, against a declared public API |
 | [0005](../adr/0005-evidence-of-need.md) | State what shows that adopters need a change to the framework |
-| [0006](../adr/0006-adr-triggers-as-should.md) | State when an architectural decision is significant, with `SHOULD` |
+| [0006](../adr/0006-adr-triggers-as-should.md) | State which decisions are significant architectural decisions, with `SHOULD` |

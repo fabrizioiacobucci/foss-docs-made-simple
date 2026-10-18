@@ -6,7 +6,7 @@ What an adopter checks at each change and at each release, so that its project d
 
 - A change SHOULD update, in the change itself, every project document it makes inaccurate. This applies from passing, before the badge asks for current documentation at silver, because a document costs least to update in the change that makes it inaccurate.
 - A change that makes a significant architectural decision MUST include its ADR ([DOCUMENTS-INDEX][index], arc42 section 9).
-- An adopter SHOULD treat an architectural decision as significant when it is costly to reverse, such as a data migration, a change to the public API or a new dependency; when it sets a constraint that lasts, such as an architectural pattern or a storage choice; or when it sets a policy that applies across the software, such as for errors, logging or naming. A decision that none of these cases covers, such as a refactoring that changes no interface or policy, or a choice that is obvious and cheap to reverse, is not significant by this rule.
+- An adopter SHOULD treat a decision as a significant architectural decision when it affects the structure of the software, its quality characteristics, such as performance or security, its dependencies, its external interface or the interfaces between its building blocks, or its construction techniques, such as a language, a framework or a policy for errors or logging. A decision that only applies an earlier ADR, or a rule that the adopter's project documents already state, is part of that earlier decision.
 - From silver, a known defect that makes a project document inconsistent with the current version of the software MUST be tracked like any other defect, and fixed.
 
 ## Releases
