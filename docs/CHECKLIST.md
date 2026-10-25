@@ -35,5 +35,5 @@ Level: passing
 
 Replace `TAG` with the adopted framework tag.
 
-[governance]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.1.0/framework/GOVERNANCE.md
-[index]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.1.0/framework/DOCUMENTS-INDEX.md
+[governance]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.2.0/framework/GOVERNANCE.md
+[index]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.2.0/framework/DOCUMENTS-INDEX.md

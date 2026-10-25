@@ -6,6 +6,7 @@ What an adopter checks at each change and at each release, so that its project d
 
 - A change SHOULD update, in the change itself, every project document it makes inaccurate. This applies from passing, before the badge asks for current documentation at silver, because a document costs least to update in the change that makes it inaccurate.
 - A change that makes a significant architectural decision MUST include its ADR ([DOCUMENTS-INDEX][index], arc42 section 9).
+- An adopter SHOULD treat a decision as a significant architectural decision when it affects the structure of the software, its quality characteristics, such as performance or security, its dependencies, its external interface or the interfaces between its building blocks, or its construction techniques, such as a language, a framework or a policy for errors or logging. A decision that only applies an earlier ADR, or a rule that the adopter's project documents already state, is part of that earlier decision.
 - From silver, a known defect that makes a project document inconsistent with the current version of the software MUST be tracked like any other defect, and fixed.
 
 ## Releases
@@ -27,6 +28,6 @@ What an adopter checks at each change and at each release, so that its project d
 
 Replace `TAG` with the adopted framework tag.
 
-[index]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.1.0/framework/DOCUMENTS-INDEX.md
-[conventions]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.1.0/framework/CONVENTIONS.md
-[license-policy]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.1.0/framework/LICENSE-POLICY.md
+[index]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.2.0/framework/DOCUMENTS-INDEX.md
+[conventions]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.2.0/framework/CONVENTIONS.md
+[license-policy]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.2.0/framework/LICENSE-POLICY.md
