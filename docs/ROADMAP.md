@@ -10,7 +10,7 @@ What this repository intends to do, and not do, from October 2026 to the end of 
   - artificial intelligence, under the EU Artificial Intelligence Act;
   - open-source software stewards, under the EU Cyber Resilience Act;
   - software supplied in the course of a commercial activity: the Cyber Resilience Act, the European Accessibility Act and record retention.
-- Pilot `v0.1.0` on two adopters for one release cycle, measuring the hours spent on each project document, to write it and to keep it current, the documents nobody reads and the problems caused by missing documents, and adjust the framework to the results.
+- Pilot `v0.2.0` on two adopters for one release cycle, measuring the hours spent on each project document, to write it and to keep it current, the documents nobody reads and the problems caused by missing documents, and adjust the framework to the results.
 - Automate what can be automated: filling the register of an adopter's `CHECKLIST` for its level, checking the release criteria of [framework/DEFINITION-OF-DONE.md](../framework/DEFINITION-OF-DONE.md) that concern project documents, and moving an adopter to a newer framework tag as [framework/GOVERNANCE.md](../framework/GOVERNANCE.md) describes.
 - Read the details of every criterion of the OpenSSF Best Practices Badge, and correct [framework/BADGE-MAP.md](../framework/BADGE-MAP.md) where they change a mapping.
 
