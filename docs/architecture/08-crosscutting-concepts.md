@@ -17,7 +17,7 @@ The repository holds Markdown documents and the scripts that check them, and the
 | A value of the project `CHECKLIST` is not true, such as the status of a document | The review of each document of the register by the Documentation Owner ([periodic checks](../../framework/GOVERNANCE.md#periodic-checks)) | At least once a year |
 | A criterion of the OpenSSF Best Practices Badge has changed | The re-read of the criteria by the maintainers ([periodic checks](../../CONTRIBUTING.md#periodic-checks)) | At least once a year |
 
-How to run the two scripts and their tests is in [CONTRIBUTING](../../CONTRIBUTING.md#tests), and what each script leaves out is stated at the top of the script. Continuous integration, in `.github/workflows/checks.yml`, runs the tests and both scripts on Linux and on macOS, on each pull request and on each push to `main`.
+How to run the two scripts and their tests is in [CONTRIBUTING](../../CONTRIBUTING.md#tests), and what each script leaves out is stated at the top of the script. Continuous integration, in `.github/workflows/checks.yml`, runs the tests and both scripts on Linux and on macOS, on each pull request and on each push to `master`.
 
 Known gaps, which no check covers yet:
 
