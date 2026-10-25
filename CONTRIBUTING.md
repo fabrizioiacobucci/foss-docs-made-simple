@@ -7,6 +7,7 @@ How to contribute to this repository, the rules that every change to the framewo
 - Bugs and proposals SHOULD be reported in the [issues](https://github.com/fabrizioiacobucci/foss-docs-made-simple/issues), except security problems, which [SECURITY.md](SECURITY.md) routes; changes MUST be sent as pull requests.
 - Every commit MUST carry a `Signed-off-by` line, by which its author certifies the [Developer Certificate of Origin](https://developercertificate.org/) (`git commit -s`). This is an addition to the framework's [contribution rule](framework/LICENSE-POLICY.md#contributions).
 - Commit messages MUST follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/). This is an addition to the framework's [commit rule](framework/CONVENTIONS.md#commits).
+- The two rules above do not apply to the merge commit that GitHub creates when it merges a pull request: it adds no content of its own, and the commits it merges follow both rules.
 
 ## Tests
 
