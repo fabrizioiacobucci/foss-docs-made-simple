@@ -89,7 +89,7 @@ git clone --quiet --branch LATEST-TAG https://github.com/fabrizioiacobucci/foss-
 - How to report a bug, propose a change or contribute: [CONTRIBUTING.md](CONTRIBUTING.md); discussion happens in the issues and pull requests.
 - The framework documents are in `framework/`. The project documents of this repository are in its root and in `docs/`.
 - What changed between framework tags: [docs/CHANGELOG.md](docs/CHANGELOG.md).
-- This repository follows foss-docs-made-simple itself, at framework tag `v0.2.0`; its level is recorded in its [CHECKLIST](docs/CHECKLIST.md).
+- This repository follows foss-docs-made-simple itself, at framework tag `v0.3.0`; its level is recorded in its [CHECKLIST](docs/CHECKLIST.md).
 
 ## Licence
 
