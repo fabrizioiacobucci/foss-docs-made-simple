@@ -13,7 +13,7 @@ How to contribute to this repository, the rules that every change to the framewo
 
 - Contributors SHOULD run the two checks from the repository root before sending a change:
   - `scripts/check-links.sh`: every relative link of the Markdown files that git does not ignore resolves, to a file with the same letter case and, when the link has an anchor, to a heading of that file;
-  - `scripts/check-copies.sh`: `docs/CHECKLIST.md` and `docs/DEFINITION-OF-DONE.md` match the framework documents at the framework tag that `README` states, or in the working tree while that tag does not exist yet, except for the values filled in, and those values have a valid form.
+  - `scripts/check-copies.sh`: `docs/CHECKLIST.md` and `docs/DEFINITION-OF-DONE.md` match the framework documents at the framework tag that `README` states, read from this clone, or in its working tree while that tag does not exist yet, except for the values filled in, and those values have a valid form.
 - What each check leaves out is stated at the top of the script; the rest of the "References" rule below, such as links to other sites, is checked by review.
 - Continuous integration runs both checks and the tests of the scripts on each pull request. A change MUST NOT be merged while either check fails.
 - A change that adds a kind of link, copied document or filled-in value SHOULD extend the checks to cover it.
