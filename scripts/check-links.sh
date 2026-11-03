@@ -14,31 +14,7 @@
 
 set -euo pipefail
 
-#######################################
-# Prints the lines of a Markdown file that are outside fenced code blocks
-# (``` or ~~~, indented by up to three spaces), as "LINE<TAB>TEXT", with any
-# carriage return removed.
-# Arguments:
-#   $1  path of the Markdown file
-# Outputs:
-#   one "LINE<TAB>TEXT" per line, on stdout
-# Example:
-#   markdown_text README.md | head -n 3
-#######################################
-markdown_text() {
-  awk '
-    {
-      line = $0
-      sub(/\r$/, "", line)
-      if (match(line, /^(   |  | )?(```|~~~)/)) {
-        marker = substr(line, RSTART + RLENGTH - 3, 3)
-        if (fence == "") { fence = marker; next }
-        if (marker == fence) { fence = ""; next }
-      }
-      if (fence == "") print NR "\t" line
-    }
-  ' "$1"
-}
+source "$(dirname "${BASH_SOURCE[0]}")/lib/markdown.sh"
 
 #######################################
 # Lists the anchors that GitHub generates for the ATX headings of a Markdown
