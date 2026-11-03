@@ -9,10 +9,34 @@ The framework covers the documents of the three levels and the rules around them
 An adopter follows the framework at a framework tag, cited like the version of a standard, and reads the framework documents at that tag. The tags are listed on the [tags page](https://github.com/fabrizioiacobucci/foss-docs-made-simple/tags) of this repository.
 
 1. Choose a framework tag and a level.
-2. Copy [framework/CHECKLIST.md](framework/CHECKLIST.md) and [framework/DEFINITION-OF-DONE.md](framework/DEFINITION-OF-DONE.md) into the project's repository, and replace `TAG` in their links with the framework tag.
-3. Write the project's `GOVERNANCE`, which names who holds the roles of [framework/GOVERNANCE.md](framework/GOVERNANCE.md) ([framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md)).
+2. Copy [framework/CHECKLIST.md](framework/CHECKLIST.md) and [framework/DEFINITION-OF-DONE.md](framework/DEFINITION-OF-DONE.md) into the project's repository, and replace `TAG` in their links with the framework tag. A copy may differ from the framework document only where the rendered document stays the same ([framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md#files)), so a formatter that pads tables or re-indents lists does no harm. A project that prefers exact copies can exclude them from its formatter: for example with a `.prettierignore` entry, which Prettier and its editor extensions read; markdownlint, dprint and mdformat have exclusion settings of their own.
+3. Write the project's `GOVERNANCE`, which names who holds the roles of [framework/GOVERNANCE.md](framework/GOVERNANCE.md) ([framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md)). For example, at passing, with `NAME` and `TAG` replaced:
+
+   ```markdown
+   # Governance
+
+   ## Roles
+
+   - Maintainers: `NAME`
+   - Documentation Owner: `NAME`
+
+   ## Documentation
+
+   This project follows the framework's [GOVERNANCE](https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/TAG/framework/GOVERNANCE.md).
+
+   Additions: none.
+   ```
+
+   This example covers passing only: silver and gold ask the project `GOVERNANCE` for more. A project lists its additions in place of "none".
 4. Record the adoption in the project's `CHECKLIST`, as [framework/GOVERNANCE.md](framework/GOVERNANCE.md) says: the level, one register row per required document, and the exceptions.
-5. Write the other project documents that [framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md) lists for the level and the levels below it, setting each to `active` in the register when it holds what the level requires, and state the framework tag in the project's `README`. Apart from `CHECKLIST` and `DEFINITION-OF-DONE`, the framework gives no starting text for project documents.
+5. Write the other project documents that [framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md) lists for the level and the levels below it, setting each to `active` in the register when it holds what the level requires, and state in the project's `README` where the project documents are and the framework tag. Apart from `CHECKLIST` and `DEFINITION-OF-DONE`, which are copied, and the examples in these steps, the framework gives no starting text for project documents. This repository is an example of the folder layout, but its project documents describe this repository, so their text is not a starting text. For example, in the project's `README`, with `TAG` replaced:
+
+   ```markdown
+   - The project documents are in the repository root and in `docs/`.
+   - This project follows [foss-docs-made-simple](https://github.com/fabrizioiacobucci/foss-docs-made-simple), at framework tag `TAG`; its level is recorded in its `CHECKLIST`.
+   ```
+
+   The checks below read the framework tag only from a statement in that form, written once in the `README`: the words "framework tag" followed by the tag in code. A project can also keep the terms of its project documents in one glossary, one meaning each, in the format of [framework/GLOSSARY.md](framework/GLOSSARY.md); if it wants the glossary kept current, it sets that as an addition in its `GOVERNANCE`.
 
 From then on, the project works by its `DEFINITION-OF-DONE`, and [framework/GOVERNANCE.md](framework/GOVERNANCE.md) says what to do when the level changes, at the yearly checks and when moving to a newer framework tag.
 
@@ -21,6 +45,31 @@ A release can be made only when every required document exists ([framework/DEFIN
 **Choosing a level.** The levels nest: an adopter at silver or gold has the documents of the levels below as well ([framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md)). Gold asks for rules that need more than one person, such as the review, before release, of at least half of the changes by someone other than their author; the badge itself asks, at gold, for at least two unassociated significant contributors.
 
 **Other rules.** Projects that adopt the same framework tag follow the same rules. An adopter can set additions, listed in its project `GOVERNANCE` ([framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md)), and record exceptions, as [framework/GOVERNANCE.md](framework/GOVERNANCE.md) says; an adopter that needs other rules can fork this repository and follow its fork instead. An adopter can report a need, or an exception it has logged, in the [issues](https://github.com/fabrizioiacobucci/foss-docs-made-simple/issues), so that the maintainers can weigh it for a later framework tag ([CONTRIBUTING](CONTRIBUTING.md#rules-for-changing-the-framework)).
+
+### Checking the project documents
+
+Two scripts of this repository check a project's documents, from tag `v0.3.0` on:
+
+- `scripts/check-copies.sh` compares the copies of `CHECKLIST` and `DEFINITION-OF-DONE` with the framework documents at the framework tag that the project's `README` states, and checks the form of the values filled in the `CHECKLIST`;
+- `scripts/check-links.sh` checks that every relative link of the project's Markdown files resolves.
+
+They run from a full clone of this repository, which holds every tag, and need no network once it is made. A clone of the latest tag also checks the documents of projects at earlier tags. From the project's root, with `LATEST-TAG` replaced:
+
+```sh
+git clone --quiet --branch LATEST-TAG https://github.com/fabrizioiacobucci/foss-docs-made-simple ../foss-docs-made-simple
+../foss-docs-made-simple/scripts/check-copies.sh .
+../foss-docs-made-simple/scripts/check-links.sh .
+```
+
+`check-copies.sh` reads the copies from `docs/`, or from the directory given with `--docs`. What each script checks, and what it leaves out, is stated at its top. A continuous integration job can run the same commands; this example, for GitHub Actions, has not yet been tried by an adopter:
+
+```yaml
+- name: Check the project documents
+  run: |
+    git clone --quiet --branch LATEST-TAG https://github.com/fabrizioiacobucci/foss-docs-made-simple "$RUNNER_TEMP/fdms"
+    "$RUNNER_TEMP/fdms/scripts/check-copies.sh" .
+    "$RUNNER_TEMP/fdms/scripts/check-links.sh" .
+```
 
 ## The framework
 
@@ -38,7 +87,7 @@ A release can be made only when every required document exists ([framework/DEFIN
 ## This repository
 
 - How to report a bug, propose a change or contribute: [CONTRIBUTING.md](CONTRIBUTING.md); discussion happens in the issues and pull requests.
-- The framework documents are in `framework/`. The project documents of this repository are `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `AGENTS.md` and `LICENSE` in its root, and the others in `docs/`.
+- The framework documents are in `framework/`. The project documents of this repository are in its root and in `docs/`.
 - What changed between framework tags: [docs/CHANGELOG.md](docs/CHANGELOG.md).
 - This repository follows foss-docs-made-simple itself, at framework tag `v0.2.0`; its level is recorded in its [CHECKLIST](docs/CHECKLIST.md).
 
