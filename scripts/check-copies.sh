@@ -196,7 +196,7 @@ normalise() {
   [[ $1 == CHECKLIST.md ]] && blank_values=1
   awk -v blank_values="$blank_values" -v separator="$TABLE_SEPARATOR" '
     { sub(/\r$/, "") }
-    blank_values && /^Level: / { print "Level: "; next }
+    blank_values && /^Level:( |$)/ { print "Level: "; next }
     blank_values && $0 ~ separator { print; in_rows = 1; next }
     blank_values && in_rows && /^[|]/ { next }
     { in_rows = 0; print }
@@ -253,9 +253,9 @@ check_checklist_values() {
     }
     { sub(/\r$/, "") }
     /^## / { section = $0; in_rows = 0 }
-    /^Level: / {
-      level = trim(substr($0, 8))
-      if (level !~ /^(passing|silver|gold)$/) fail("level \"" level "\" is not passing, silver or gold")
+    /^Level:( |$)/ {
+      level = trim(substr($0, 7))
+      if (level !~ /^(passing|silver|gold)$/) fail("level \"" level "\" is not passing, silver or gold; write one of these words alone, without emphasis")
     }
     $0 ~ separator { in_rows = 1; next }
     in_rows && /^[|]/ {

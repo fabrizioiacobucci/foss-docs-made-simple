@@ -226,6 +226,20 @@ test_rejects_a_level_outside_the_three() {
   expect_rejected '' "$VALID_REGISTER" "" 'level "" is not passing, silver or gold'
 }
 
+test_rejects_a_level_left_unfilled_with_or_without_its_trailing_space() {
+  make_adopter
+  expect_rejected '' "$VALID_REGISTER" "" 'level "" is not passing, silver or gold'
+  edit docs/CHECKLIST.md 's/^Level: $/Level:/'
+  run_copies
+  assert_status 1
+  assert_stdout_has 'docs/CHECKLIST.md:5: level "" is not passing, silver or gold'
+}
+
+test_says_that_the_level_is_written_without_emphasis() {
+  make_adopter
+  expect_rejected _passing_ "$VALID_REGISTER" "" 'level "_passing_" is not passing, silver or gold; write one of these words alone, without emphasis'
+}
+
 test_rejects_a_document_name_of_another_form() {
   make_adopter
   expect_rejected passing '| README | `active` |  |' "" 'document "README" is neither an id in code format nor "arc42 section N"'
