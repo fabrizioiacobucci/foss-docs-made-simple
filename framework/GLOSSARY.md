@@ -47,7 +47,7 @@ _Avoid_: exception
 ## Requirements and quality
 
 **BCP 14 keywords**:
-`MUST`, `SHOULD`, `MAY`, their synonyms (`REQUIRED`, `SHALL`, `RECOMMENDED`, `OPTIONAL`) and their negations, with the meanings of [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119), which they carry only in capitals ([RFC 8174](https://www.rfc-editor.org/rfc/rfc8174)).
+`MUST`, `SHOULD`, `MAY`, their synonyms (`REQUIRED`, `SHALL`, `RECOMMENDED`, `OPTIONAL`) and their negations, with the meanings of [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119), which they carry only in capitals ([RFC 8174](https://www.rfc-editor.org/rfc/rfc8174)). The framework and its adopters use these meanings for their own rules, beyond the use that RFC 2119, section 6, advises for IETF documents: where they are required for interoperation or to limit harm.
 _Avoid_: Vocabulary, RFC 2119 keywords
 
 **SUGGESTED**:

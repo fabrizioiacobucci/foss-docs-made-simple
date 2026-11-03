@@ -11,6 +11,7 @@ How an adopter writes its project documents, requirements, ADRs, commits, versio
 ## Requirements
 
 - An adopter SHOULD write requirements with BCP 14 keywords.
+- It is SUGGESTED that an adopter that writes requirements with BCP 14 keywords state once, in its `README` or in a project document its `README` links, that these keywords and `SUGGESTED` carry the meanings of the entries "BCP 14 keywords" and "SUGGESTED" of the framework's [GLOSSARY](GLOSSARY.md), linked at the adopted framework tag.
 
 ## ADRs
 
