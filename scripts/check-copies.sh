@@ -1,33 +1,59 @@
 #!/usr/bin/env bash
-# Checks that this repository's copies of the copied framework documents,
-# docs/CHECKLIST.md and docs/DEFINITION-OF-DONE.md, match framework/ at the
-# framework tag that README.md states, except for TAG replaced by that tag
-# and, in the CHECKLIST, the values filled in; and that those values have a
-# valid form: the level, each register row (document name, status, date)
-# and each log date. It does not check that the register lists every
-# required document. Carriage returns and a missing final newline are
-# ignored. While the tag exists neither locally nor on the remote origin,
-# framework/ in the working tree is the reference, with a warning.
+# Checks that a project's copies of the copied framework documents,
+# CHECKLIST.md and DEFINITION-OF-DONE.md, match framework/ in a clone of the
+# framework at the framework tag that the project's README states, except
+# for TAG replaced by that tag, the layout that the framework's
+# DOCUMENTS-INDEX lets a copy change and, in the CHECKLIST, the values
+# filled in; and that those values have a valid form: the level, each
+# register row (document name, status, date) and each log date, as the
+# framework's CHECKLIST defines them at v0.1.0 and v0.2.0. It does not check
+# that the register lists every required document. Carriage returns and a
+# missing final newline are ignored. The copies are compared word by word,
+# and the differences are shown on the same word lists.
 #
-# Usage: scripts/check-copies.sh [ROOT]
-#   ROOT  repository root to check; defaults to the current directory.
+# The README is the first of README.md, .github/README.md and docs/README.md
+# under ROOT, as GitHub reads them. The script needs it to state the tag
+# exactly once, outside fenced code, in the form
+#   framework tag `vMAJOR.MINOR.PATCH`
+# such as "at framework tag `v0.2.0`". This is a requirement of this tool,
+# not a framework rule. The tag is read from the clone, which must hold it:
+# the script never uses the network. When ROOT is the clone itself and the
+# tag does not exist yet, as before a framework release, framework/ in its
+# working tree is the reference, with a warning. A script from a newer tag
+# also applies its layout tolerance to copies of earlier tags.
+#
+# Known gaps: both copies must be in one directory; a nested list made flat
+# and a code block made by indentation are not detected, though the
+# framework does not let a copy change them; the script finds scripts/lib/
+# next to itself, so a symbolic link to it is not supported.
+#
+# Usage: scripts/check-copies.sh [--framework DIR] [--docs DIR] [ROOT]
+#   --framework DIR  clone of the framework to read the framework documents
+#                    from; defaults to the clone this script belongs to.
+#   --docs DIR       directory of the copies, relative to ROOT unless
+#                    absolute; defaults to docs.
+#   ROOT             project to check; defaults to the current directory.
 # Exit status: 0 when the copies match, 1 when they do not, 2 when the check
-#   cannot run (bad arguments, ROOT not a directory, README.md stating no
-#   single valid tag, a file missing, the tag on origin but not fetched, or
-#   origin unreachable while the tag is not fetched).
-# Example: scripts/check-copies.sh && echo "copies ok"
+#   cannot run (wrong arguments, ROOT not a directory, DIR not a git clone,
+#   no README or no single valid tag in it, a file missing, or the tag not
+#   in the clone).
+# Example: ../foss-docs-made-simple/scripts/check-copies.sh . && echo "ok"
 
 set -euo pipefail
 
+source "$(dirname "${BASH_SOURCE[0]}")/lib/markdown.sh"
+
 readonly COPIED_DOCUMENTS=(DEFINITION-OF-DONE.md CHECKLIST.md)
 readonly TABLE_SEPARATOR='^[|]( *-+ *[|])+ *$'
+readonly TAG_STATEMENT='framework tag `v[0-9]+\.[0-9]+\.[0-9]+`'
+readonly USAGE='usage: scripts/check-copies.sh [--framework DIR] [--docs DIR] [ROOT]'
 
 #######################################
 # Prints an error and exits with status 2.
 # Arguments:
 #   $1  message
 # Example:
-#   fail_to_run "README.md is missing"
+#   fail_to_run "docs/CHECKLIST.md is missing"
 #######################################
 fail_to_run() {
   echo "check-copies: $1" >&2
@@ -35,57 +61,73 @@ fail_to_run() {
 }
 
 #######################################
-# Prints the framework tag that README.md says this repository follows, and
-# exits with status 2 unless README.md states exactly one tag of the form
-# vMAJOR.MINOR.PATCH.
+# Prints the path of the project's README under ROOT: the first of
+# README.md, .github/README.md and docs/README.md that exists, as GitHub
+# reads them. Exits with status 2 when there is none.
 # Arguments:
-#   none; reads README.md in the current directory
+#   $1  absolute path of ROOT
 # Outputs:
-#   the tag, such as v0.1.0, on stdout
+#   the path, relative to ROOT, on stdout
 # Example:
-#   tag=$(adopted_tag)
+#   readme=$(project_readme "$root")
 #######################################
-adopted_tag() {
-  local tags
-  [[ -f README.md ]] || fail_to_run "README.md is missing"
-  tags=$(sed -nE 's/.*follows foss-docs-made-simple itself, at framework tag `([^`]+)`.*/\1/p' README.md)
-  [[ -n $tags ]] || fail_to_run "README.md states no framework tag"
-  [[ $tags != *$'\n'* ]] || fail_to_run "README.md states more than one framework tag"
-  [[ $tags =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail_to_run "\"$tags\" is not a framework tag (vMAJOR.MINOR.PATCH)"
-  printf '%s\n' "$tags"
+project_readme() {
+  local root=$1 path
+  for path in README.md .github/README.md docs/README.md; do
+    if [[ -f $root/$path ]]; then
+      printf '%s\n' "$path"
+      return
+    fi
+  done
+  fail_to_run "no README.md in ROOT, .github/ or docs/"
 }
 
 #######################################
-# Tells whether framework/ should be read at the tag (the tag exists here),
-# or from the working tree (there is no remote origin, or origin answers
-# that the tag does not exist, as before its first release). Exits with
-# status 2 when the tag is on origin but not fetched, as in a clone made
-# without tags, or when origin cannot be reached to tell. git ls-remote
-# --exit-code returns 2 only when origin answered and has no such tag.
+# Prints the framework tag that a README states, and exits with status 2
+# unless the README states exactly one, outside fenced code, in the form
+# framework tag `vMAJOR.MINOR.PATCH`.
+# Arguments:
+#   $1  absolute path of ROOT
+#   $2  path of the README, relative to ROOT
+# Outputs:
+#   the tag, such as v0.1.0, on stdout
+# Example:
+#   tag=$(adopted_tag "$root" README.md)
+#######################################
+adopted_tag() {
+  local root=$1 readme=$2 statements count
+  statements=$(markdown_text "$root/$readme" | cut -f 2- | grep -oE "$TAG_STATEMENT" || true)
+  count=$(printf '%s' "$statements" | grep -c . || true)
+  ((count > 0)) || fail_to_run "$readme states no framework tag in the form: framework tag \`vMAJOR.MINOR.PATCH\`"
+  ((count == 1)) || fail_to_run "$readme states more than one framework tag"
+  printf '%s\n' "$statements" | sed -E 's/^framework tag `(.*)`$/\1/'
+}
+
+#######################################
+# Tells whether framework/ should be read at the tag in the clone, or from
+# the clone's working tree, which happens only when ROOT is the clone itself
+# and the tag does not exist yet, as before a framework release. Exits with
+# status 2 when the tag is missing from the clone of another project's
+# framework.
 # Arguments:
 #   $1  framework tag
+#   $2  absolute path of the framework clone
+#   $3  absolute path of ROOT
 # Outputs:
 #   "tag" or "working-tree" on stdout; a warning on stderr for the latter
 # Example:
-#   source=$(reference_source v0.1.0)
+#   source=$(reference_source v0.1.0 "$framework" "$root")
 #######################################
 reference_source() {
-  local tag=$1 remote_status
-  if git rev-parse -q --verify "refs/tags/$tag" >/dev/null 2>&1; then
+  local tag=$1 framework=$2 root=$3
+  if git -C "$framework" rev-parse -q --verify "refs/tags/$tag^{commit}" >/dev/null 2>&1; then
     echo tag
-    return
+  elif [[ $root == "$framework" ]]; then
+    echo "check-copies: tag $tag not found; comparing with framework/ in the working tree" >&2
+    echo working-tree
+  else
+    fail_to_run "tag $tag is not in the framework clone $framework; run: git -C $framework fetch --tags"
   fi
-  if git remote get-url origin >/dev/null 2>&1; then
-    git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1 \
-      && remote_status=0 || remote_status=$?
-    case $remote_status in
-      0) fail_to_run "tag $tag is on origin but not fetched; run: git fetch --tags" ;;
-      2) ;;
-      *) fail_to_run "cannot reach origin to tell whether tag $tag exists; connect, or fetch the tags" ;;
-    esac
-  fi
-  echo "check-copies: tag $tag not found; comparing with framework/ in the working tree" >&2
-  echo working-tree
 }
 
 #######################################
@@ -94,17 +136,18 @@ reference_source() {
 # Arguments:
 #   $1  framework tag
 #   $2  "tag" or "working-tree"
-#   $3  file name in framework/, such as CHECKLIST.md
+#   $3  absolute path of the framework clone
+#   $4  file name in framework/, such as CHECKLIST.md
 # Example:
-#   require_framework_document v0.1.0 tag CHECKLIST.md
+#   require_framework_document v0.1.0 tag "$framework" CHECKLIST.md
 #######################################
 require_framework_document() {
-  local tag=$1 source=$2 name=$3
+  local tag=$1 source=$2 framework=$3 name=$4
   if [[ $source == tag ]]; then
-    git cat-file -e "refs/tags/$tag:./framework/$name" 2>/dev/null \
+    git -C "$framework" cat-file -e "refs/tags/$tag:framework/$name" 2>/dev/null \
       || fail_to_run "framework/$name does not exist at $tag"
   else
-    [[ -f framework/$name ]] || fail_to_run "framework/$name is missing"
+    [[ -f $framework/framework/$name ]] || fail_to_run "framework/$name is missing"
   fi
 }
 
@@ -114,29 +157,37 @@ require_framework_document() {
 # Arguments:
 #   $1  framework tag
 #   $2  "tag" or "working-tree"
-#   $3  file name in framework/, such as CHECKLIST.md
+#   $3  absolute path of the framework clone
+#   $4  file name in framework/, such as CHECKLIST.md
 # Outputs:
 #   the document, on stdout
 # Example:
-#   framework_document v0.1.0 tag CHECKLIST.md | head -n 1
+#   framework_document v0.1.0 tag "$framework" CHECKLIST.md | head -n 1
 #######################################
 framework_document() {
-  local tag=$1 source=$2 name=$3
+  local tag=$1 source=$2 framework=$3 name=$4
   if [[ $source == tag ]]; then
-    git show "refs/tags/$tag:./framework/$name"
+    git -C "$framework" show "refs/tags/$tag:framework/$name"
   else
-    cat "framework/$name"
+    cat "$framework/framework/$name"
   fi | sed "s#/blob/TAG/#/blob/$tag/#g"
 }
 
 #######################################
-# Prints a document with carriage returns removed and a final newline,
-# blanking the filled-in values when it is a CHECKLIST: the value of the
-# "Level: " line and the data rows of its tables.
+# Prints a document as the list of its words, one per line, so that two
+# documents compare equal when they differ only where the rendered document
+# stays the same, as the framework's DOCUMENTS-INDEX allows for copies:
+# spaces around table cells, hyphens and spaces in table separators, list
+# indentation and line breaks inside a paragraph or a list item. Carriage
+# returns are removed and, in a CHECKLIST, the filled-in values are blanked
+# first: the value of the "Level: " line and the data rows of its tables.
+# A blank line marks where a block starts: after a blank line, or at a list
+# item, heading, table row or quote, which can interrupt a paragraph; so
+# joining two blocks, or a link definition to a paragraph, is reported.
 # Arguments:
 #   $1  file name, such as CHECKLIST.md; reads the document on stdin
 # Outputs:
-#   the normalised document, on stdout
+#   the words, one per line, on stdout
 # Example:
 #   normalise CHECKLIST.md <docs/CHECKLIST.md
 #######################################
@@ -145,10 +196,30 @@ normalise() {
   [[ $1 == CHECKLIST.md ]] && blank_values=1
   awk -v blank_values="$blank_values" -v separator="$TABLE_SEPARATOR" '
     { sub(/\r$/, "") }
-    blank_values && /^Level: / { print "Level: "; next }
+    blank_values && /^Level:( |$)/ { print "Level: "; next }
     blank_values && $0 ~ separator { print; in_rows = 1; next }
     blank_values && in_rows && /^[|]/ { next }
     { in_rows = 0; print }
+  ' | awk '
+    {
+      line = $0
+      gsub(/[ \t]+/, " ", line)
+      sub(/^ /, "", line)
+      sub(/ $/, "", line)
+    }
+    line == "" { block_start = 1; next }
+    line ~ /^[|]/ {
+      gsub(/ ?[|] ?/, "|", line)
+      if (line ~ /^[|:-]+$/) gsub(/-+/, "-", line)
+    }
+    line ~ /^([-*+]|[0-9]+[.)])( |$)/ || line ~ /^(#|[|]|>)/ { block_start = 1 }
+    {
+      if (block_start && printed) print ""
+      block_start = 0
+      count = split(line, words, " ")
+      for (i = 1; i <= count; i++) print words[i]
+      printed = 1
+    }
   '
 }
 
@@ -160,15 +231,16 @@ normalise() {
 # "FILE:LINE: problem".
 # Arguments:
 #   $1  path of the CHECKLIST copy
+#   $2  name of the copy in the report, such as docs/CHECKLIST.md
 # Outputs:
 #   one line per problem, on stdout
 # Returns:
 #   0 when every value has a valid form, 1 otherwise
 # Example:
-#   check_checklist_values docs/CHECKLIST.md
+#   check_checklist_values "$root/docs/CHECKLIST.md" docs/CHECKLIST.md
 #######################################
 check_checklist_values() {
-  awk -v file="$1" -v separator="$TABLE_SEPARATOR" '
+  awk -v file="$2" -v separator="$TABLE_SEPARATOR" '
     function fail(message) { print file ":" NR ": " message; bad = 1 }
     function trim(s) { gsub(/^[ \t]+|[ \t]+$/, "", s); return s }
     function is_date(s,   year, month, day, last) {
@@ -181,9 +253,9 @@ check_checklist_values() {
     }
     { sub(/\r$/, "") }
     /^## / { section = $0; in_rows = 0 }
-    /^Level: / {
-      level = trim(substr($0, 8))
-      if (level !~ /^(passing|silver|gold)$/) fail("level \"" level "\" is not passing, silver or gold")
+    /^Level:( |$)/ {
+      level = trim(substr($0, 7))
+      if (level !~ /^(passing|silver|gold)$/) fail("level \"" level "\" is not passing, silver or gold; write one of these words alone, without emphasis")
     }
     $0 ~ separator { in_rows = 1; next }
     in_rows && /^[|]/ {
@@ -213,56 +285,94 @@ check_checklist_values() {
 # Arguments:
 #   $1  framework tag
 #   $2  "tag" or "working-tree"
-#   $3  file name in framework/ and in docs/
-#   $4  directory for the two normalised files
+#   $3  absolute path of the framework clone
+#   $4  file name in framework/ and in the copies' directory
+#   $5  absolute path of the copies' directory
+#   $6  name of the copies' directory in the report, such as docs
+#   $7  directory for the two normalised files
 # Outputs:
 #   the differences, on stdout
 # Returns:
 #   0 when they match, 1 otherwise
 # Example:
-#   compare_copy v0.1.0 tag DEFINITION-OF-DONE.md "$work_dir"
+#   compare_copy v0.1.0 tag "$framework" DEFINITION-OF-DONE.md "$root/docs" docs "$work_dir"
 #######################################
 compare_copy() {
-  local tag=$1 source=$2 name=$3 dir=$4
-  framework_document "$tag" "$source" "$name" | normalise "$name" >"$dir/framework-$name"
-  normalise "$name" <"docs/$name" >"$dir/copy-$name"
+  local tag=$1 source=$2 framework=$3 name=$4 docs=$5 docs_label=$6 dir=$7
+  framework_document "$tag" "$source" "$framework" "$name" | normalise "$name" >"$dir/framework-$name"
+  normalise "$name" <"$docs/$name" >"$dir/copy-$name"
   if ! diff -u "$dir/framework-$name" "$dir/copy-$name" >"$dir/diff"; then
-    echo "docs/$name differs from framework/$name at $tag:"
+    echo "$docs_label/$name differs from framework/$name at $tag:"
     cat "$dir/diff"
     return 1
   fi
 }
 
 #######################################
-# Runs every check on the copies under ROOT.
+# Prints the absolute path of the top of the git clone that holds a
+# directory, and exits with status 2 when it is not in one.
 # Arguments:
-#   $1  repository root; defaults to the current directory
+#   $1  directory, as given on the command line
+# Outputs:
+#   the absolute path, on stdout
+# Example:
+#   framework=$(framework_clone ../foss-docs-made-simple)
+#######################################
+framework_clone() {
+  [[ -d $1 ]] && git -C "$1" rev-parse --show-toplevel 2>/dev/null \
+    || fail_to_run "$1 is not a git clone of the framework"
+}
+
+#######################################
+# Runs every check on the copies of the project under ROOT.
+# Arguments:
+#   [--framework DIR] [--docs DIR] [ROOT], as in the usage above
 # Outputs:
 #   the problems found, or a success line, on stdout
 # Returns:
 #   0 when the copies match, 1 otherwise; exits with 2 when the check
 #   cannot run
 # Example:
-#   main .
+#   main --docs handbook .
 #######################################
 main() {
-  (($# <= 1)) || fail_to_run "usage: scripts/check-copies.sh [ROOT]"
-  local root=${1:-.} status=0 tag source work_dir name
+  local framework root='' docs_label=docs docs status=0 readme tag source work_dir name
+  framework="$(dirname "${BASH_SOURCE[0]}")/.."
+  while (($# > 0)); do
+    case $1 in
+      --framework | --docs)
+        (($# >= 2)) || fail_to_run "$USAGE"
+        if [[ $1 == --framework ]]; then framework=$2; else docs_label=$2; fi
+        shift 2
+        ;;
+      -*) fail_to_run "$USAGE" ;;
+      *)
+        [[ -z $root ]] || fail_to_run "$USAGE"
+        root=$1
+        shift
+        ;;
+    esac
+  done
+  root=${root:-.}
   [[ -d $root ]] || fail_to_run "$root: not a directory"
-  cd "$root"
-  tag=$(adopted_tag)
-  source=$(reference_source "$tag")
+  root=$(cd "$root" && pwd -P)
+  framework=$(framework_clone "$framework")
+  framework=$(cd "$framework" && pwd -P)
+  if [[ $docs_label == /* ]]; then docs=$docs_label; else docs=$root/$docs_label; fi
+  readme=$(project_readme "$root")
+  tag=$(adopted_tag "$root" "$readme")
+  source=$(reference_source "$tag" "$framework" "$root")
   for name in "${COPIED_DOCUMENTS[@]}"; do
-    [[ -f docs/$name ]] || fail_to_run "docs/$name is missing"
-    require_framework_document "$tag" "$source" "$name"
+    [[ -f $docs/$name ]] || fail_to_run "$docs_label/$name is missing"
+    require_framework_document "$tag" "$source" "$framework" "$name"
   done
   work_dir=$(mktemp -d "${TMPDIR:-/tmp}/check-copies.XXXXXX")
   # Expanded now: work_dir is local to main and gone when the EXIT trap runs.
   trap "rm -rf $(printf '%q' "$work_dir")" EXIT
   for name in "${COPIED_DOCUMENTS[@]}"; do
-    compare_copy "$tag" "$source" "$name" "$work_dir" || status=1
+    compare_copy "$tag" "$source" "$framework" "$name" "$docs" "$docs_label" "$work_dir" || status=1
   done
-  check_checklist_values docs/CHECKLIST.md || status=1
+  check_checklist_values "$docs/CHECKLIST.md" "$docs_label/CHECKLIST.md" || status=1
   if ((status == 0)); then
     if [[ $source == tag ]]; then
       echo "The copies match the framework documents at $tag."

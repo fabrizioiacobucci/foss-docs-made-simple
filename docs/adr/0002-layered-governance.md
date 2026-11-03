@@ -1,6 +1,6 @@
 ---
 status: accepted
-date: 2026-10-13
+date: 2026-11-03
 decision-makers: "@fabrizioiacobucci"
 ---
 
@@ -52,3 +52,5 @@ Chosen option: "Two layers, the project `GOVERNANCE` from passing", because each
 This repository's own project `GOVERNANCE` is [docs/GOVERNANCE.md](../GOVERNANCE.md).
 
 This ADR was written on 2026-10-14, after the decision. The layers were first decided on 2026-10-13 with the project `GOVERNANCE` from silver, and changed the same day to start from passing. The first two options were added when this ADR was written: the previous framework already said that its GOVERNANCE is never copied, and a review found a draft of this repository's `GOVERNANCE` restating rules.
+
+2026-11-03: the date of the decision, 2026-10-13, moved here from `date`, which now holds the date of the last update, as MADR defines it and the framework's [CONVENTIONS](../../framework/CONVENTIONS.md#adrs) asks.

@@ -11,10 +11,18 @@ How an adopter writes its project documents, requirements, ADRs, commits, versio
 ## Requirements
 
 - An adopter SHOULD write requirements with BCP 14 keywords.
+- It is SUGGESTED that an adopter that writes requirements with BCP 14 keywords state once, in its `README` or in a project document its `README` links, that these keywords and `SUGGESTED` carry the meanings of the entries "BCP 14 keywords" and "SUGGESTED" of the framework's [GLOSSARY](GLOSSARY.md), linked at the adopted framework tag.
 
 ## ADRs
 
 - ADRs SHOULD follow one of the templates of [MADR 4.0.0](https://github.com/adr/madr/releases/tag/4.0.0).
+- An ADR is `accepted` once its decision is agreed, as [Nygard 2011](https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions) uses the status, and an ADR without a `status` field, as in MADR's minimal templates, records an agreed decision. For an ADR written when its decision is made, the change that sets it to `accepted`, or that adds it without a `status` field, is the change that makes the decision, which [DEFINITION-OF-DONE](DEFINITION-OF-DONE.md) asks to include the ADR.
+- An ADR MAY be committed with the status `proposed` before its decision is agreed; an ADR of a template without metadata MAY take the `status` field of MADR's full template for that.
+- Carrying out a decision MAY take later changes, each of which MAY carry out more than one ADR; the ADR's "Confirmation" section MAY name them.
+- `date` is the date on which the ADR was last updated, as MADR defines it.
+- An ADR written after its decision SHOULD say so, and give the date of the decision, in its "More Information" section.
+- An accepted ADR, or an ADR without a `status` field, MAY be supplemented or corrected when its chosen option and its considered options stay the same. It is SUGGESTED that each such change add a note to "More Information" with its date and reason, adding that section at the end of the ADR when the template lacks it.
+- A changed decision is a new decision, with an ADR of its own. An ADR that a later one supersedes SHOULD be marked as superseded, with a link to the ADR that supersedes it: in its `status` field or, without one, in a line at its top.
 
 ## Commits
 

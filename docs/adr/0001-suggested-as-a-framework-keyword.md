@@ -1,6 +1,6 @@
 ---
 status: accepted
-date: 2026-10-13
+date: 2026-11-03
 decision-makers: "@fabrizioiacobucci"
 ---
 
@@ -55,4 +55,6 @@ The maintainers check each change to a framework document against the "Keywords"
 
 Rules that became `SUGGESTED` with this decision: OSI approval of the licence ([LICENSE-POLICY](../../framework/LICENSE-POLICY.md)) and Semantic Versioning or Calendar Versioning ([CONVENTIONS](../../framework/CONVENTIONS.md#versions)).
 
-This ADR was written on 2026-10-14, after the decision. The maintainer chose after asking about `RECOMMENDED`, which RFC 2119 makes a synonym of `SHOULD`.
+This ADR was written on 2026-10-14, after the decision, which was made on 2026-10-13. The maintainer chose after asking about `RECOMMENDED`, which RFC 2119 makes a synonym of `SHOULD`.
+
+2026-11-03: the date of the decision, 2026-10-13, moved here from `date`, which now holds the date of the last update, as MADR defines it and the framework's [CONVENTIONS](../../framework/CONVENTIONS.md#adrs) asks.
