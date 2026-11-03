@@ -4,7 +4,7 @@ The concepts that apply across this repository: how it is tested, how it is rele
 
 ## Test strategy
 
-The repository holds Markdown documents and the scripts that check them, and the scripts have tests of their own in `scripts/tests/`. The scripts are Bash scripts that use standard tools and git; `scripts/check-copies.sh` also needs to reach the remote `origin` while the adopted framework tag is not fetched. Their tests use the same tools and need no network.
+The repository holds Markdown documents and the scripts that check them, and the scripts have tests of their own in `scripts/tests/`. The scripts are Bash scripts that use standard tools and git, and need no network: they check this repository or an adopter's, and `scripts/check-copies.sh` reads the framework documents at the adopted framework tag from the clone of this repository it is run from ([ADR 0007](../adr/0007-check-from-a-clone-of-the-framework.md)), so the network is needed only to clone or fetch that clone. Their tests use the same tools and need no network.
 
 | What can go wrong | How it is caught, and by whom | When |
 |---|---|---|
@@ -22,7 +22,10 @@ How to run the two scripts and their tests is in [CONTRIBUTING](../../CONTRIBUTI
 Known gaps, which no check covers yet:
 
 - links to other sites, including the links at the adopted framework tag, which resolve only once the tag is published;
-- whether the register lists every required document.
+- whether the register lists every required document;
+- copies of the framework documents kept in two directories, which `scripts/check-copies.sh` cannot read;
+- a nested list made flat, or a code block made by indentation, in a copy of a framework document, which `scripts/check-copies.sh` does not detect, though [DOCUMENTS-INDEX](../../framework/DOCUMENTS-INDEX.md#files) does not let a copy change them ([ADR 0008](../adr/0008-copies-differ-only-where-the-rendering-stays-the-same.md));
+- file names written in inline code, such as a README that names a file that does not exist, which no script reads ([ADR 0007](../adr/0007-check-from-a-clone-of-the-framework.md)).
 
 ## Release
 

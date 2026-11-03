@@ -12,8 +12,8 @@ How to contribute to this repository, the rules that every change to the framewo
 ## Tests
 
 - Contributors SHOULD run the two checks from the repository root before sending a change:
-  - `scripts/check-links.sh`: every relative link of the Markdown files resolves, to a file with the same letter case and, when the link has an anchor, to a heading of that file;
-  - `scripts/check-copies.sh`: `docs/CHECKLIST.md` and `docs/DEFINITION-OF-DONE.md` match the framework documents at the framework tag that `README` states, or in the working tree while that tag does not exist yet, except for the values filled in, and those values have a valid form.
+  - `scripts/check-links.sh`: every relative link of the Markdown files that git does not ignore resolves, to a file with the same letter case and, when the link has an anchor, to a heading of that file;
+  - `scripts/check-copies.sh`: `docs/CHECKLIST.md` and `docs/DEFINITION-OF-DONE.md` match the framework documents at the framework tag that `README` states, read from this clone, or in its working tree while that tag does not exist yet, except for the values filled in and the layout that [DOCUMENTS-INDEX](framework/DOCUMENTS-INDEX.md#files) lets a copy change, and those values have a valid form.
 - What each check leaves out is stated at the top of the script; the rest of the "References" rule below, such as links to other sites, is checked by review.
 - Continuous integration runs both checks and the tests of the scripts on each pull request. A change MUST NOT be merged while either check fails.
 - A change that adds a kind of link, copied document or filled-in value SHOULD extend the checks to cover it.
@@ -30,6 +30,7 @@ Every change to a framework document MUST meet these rules before it is merged:
 - **Terms.** Each term defined in [framework/GLOSSARY.md](framework/GLOSSARY.md) is used in its canonical form, never one of its "Avoid" synonyms.
 - **References.** Every link resolves, and every project document named exists in [framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md).
 - **Dependents.** When a change alters a rule, every framework document that relies on that rule is re-read against these rules in the same change.
+- **Examples.** When a change alters the `README` or `GOVERNANCE` row of [framework/DOCUMENTS-INDEX.md](framework/DOCUMENTS-INDEX.md), or the form of the tag statement that `scripts/check-copies.sh` reads, the examples in the [README](README.md#adopting-the-framework)'s adoption steps are re-read and corrected in the same change, since the "Dependents" rule does not reach the README.
 - **Nothing ahead of need.** Nothing is added before an adopter needs it, and the simplest form that works is chosen. A need is shown by a criterion of the OpenSSF Best Practices Badge, by a law or a standard that [docs/ROADMAP.md](docs/ROADMAP.md) plans to cover, by a defect of the framework, such as an ambiguity or a contradiction, or by an adopter's case reported in the issues. When adopters report exceptions to the same rule, the maintainers re-read the rule, and MAY make it weaker only as far as the "Badge strength" and "Sources" rules allow.
 - **Third-party text.** The framework links to third-party works where it uses them and does not copy their text beyond short quotations (see the [README](README.md#licence)).
 - **Names.** A new project document is named in capitals with hyphens, such as `THREAT-MODEL`; a file that GitHub reads by name keeps the name GitHub expects, such as `CODE_OF_CONDUCT`.

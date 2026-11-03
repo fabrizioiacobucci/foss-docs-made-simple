@@ -200,6 +200,61 @@ test_skips_the_git_directory() {
   assert_stdout_lacks ".git/"
 }
 
+test_skips_the_paths_that_git_ignores() {
+  fixture_git init -q
+  write .gitignore <<<'node_modules/'
+  write node_modules/pkg/README.md <<<'[gone](missing.md)'
+  write README.md <<<'# Project'
+  run_check check-links.sh
+  assert_status 0
+  assert_stdout_has "All relative links resolve."
+}
+
+test_checks_untracked_files_that_git_does_not_ignore() {
+  fixture_git init -q
+  write notes.md <<<'[gone](missing.md)'
+  run_check check-links.sh
+  assert_status 1
+  assert_stdout_has "notes.md:1: missing.md"
+}
+
+test_skips_tracked_files_deleted_from_the_working_tree() {
+  fixture_git init -q
+  write README.md <<<'# Project'
+  write old.md <<<'# Old'
+  fixture_git add -A
+  fixture_git commit -q -m fixture
+  rm old.md
+  run_check check-links.sh
+  assert_status 0
+  assert_stdout_has "All relative links resolve."
+}
+
+test_checks_only_the_given_folder_of_a_repository() {
+  fixture_git init -q
+  write README.md <<<'[gone](missing.md)'
+  write site/guide.md <<<'[home](../README.md)'
+  run_check check-links.sh site
+  assert_status 0
+  assert_stdout_lacks "missing.md"
+}
+
+test_cannot_run_when_git_fails_inside_a_repository() {
+  fixture_git init -q
+  write README.md <<<'# Project'
+  printf '[core\n' >.git/config
+  run_check check-links.sh
+  assert_status 2
+  assert_stderr_has "check-links: git cannot tell whether this is a repository"
+}
+
+test_cannot_run_when_no_markdown_file_is_found() {
+  write notes.txt <<<'no Markdown here'
+  run_check check-links.sh
+  assert_status 2
+  assert_stderr_has "check-links: no Markdown file found"
+}
+
 test_ignores_carriage_returns() {
   printf '# Project\r\n\r\n## Next steps ##\r\n\r\n[next](#next-steps)\r\n[self]: README.md\r\n' >README.md
   run_check check-links.sh

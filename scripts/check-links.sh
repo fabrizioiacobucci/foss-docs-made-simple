@@ -1,44 +1,25 @@
 #!/usr/bin/env bash
-# Checks that every relative link in the Markdown files of this repository,
-# except those in .git/,
-# points to a file that exists, with the same letter case, and, when it has
-# an anchor and the target is a Markdown file, to an ATX heading (# Title) of
-# that file. Links with a scheme (https:, mailto:, ...) are not checked, nor
-# are anchors on other files, setext headings or HTML anchors.
+# Checks that every relative link in the Markdown files under ROOT points to
+# a file that exists, with the same letter case, and, when it has an anchor
+# and the target is a Markdown file, to an ATX heading (# Title) of that
+# file. Links with a scheme (https:, mailto:, ...) are not checked, nor are
+# anchors on other files, setext headings or HTML anchors. Inside a git
+# repository, the files are those git lists, tracked or not, except those it
+# ignores (such as node_modules/) and tracked files deleted from the working
+# tree; outside one, every Markdown file except those in .git/. It finds
+# scripts/lib/ next to itself, so a symbolic link to it is not supported.
 #
 # Usage: scripts/check-links.sh [ROOT]
-#   ROOT  repository root to check; defaults to the current directory.
+#   ROOT  directory to check, such as an adopter's repository; defaults to
+#         the current directory.
 # Exit status: 0 when every link resolves, 1 when at least one does not,
-#   2 when the arguments are wrong or ROOT is not a directory.
-# Example: scripts/check-links.sh && echo "links ok"
+#   2 when the check cannot run (wrong arguments, ROOT not a directory, git
+#   failing inside a repository, or no Markdown file found).
+# Example: scripts/check-links.sh ../my-project && echo "links ok"
 
 set -euo pipefail
 
-#######################################
-# Prints the lines of a Markdown file that are outside fenced code blocks
-# (``` or ~~~, indented by up to three spaces), as "LINE<TAB>TEXT", with any
-# carriage return removed.
-# Arguments:
-#   $1  path of the Markdown file
-# Outputs:
-#   one "LINE<TAB>TEXT" per line, on stdout
-# Example:
-#   markdown_text README.md | head -n 3
-#######################################
-markdown_text() {
-  awk '
-    {
-      line = $0
-      sub(/\r$/, "", line)
-      if (match(line, /^(   |  | )?(```|~~~)/)) {
-        marker = substr(line, RSTART + RLENGTH - 3, 3)
-        if (fence == "") { fence = marker; next }
-        if (marker == fence) { fence = ""; next }
-      }
-      if (fence == "") print NR "\t" line
-    }
-  ' "$1"
-}
+source "$(dirname "${BASH_SOURCE[0]}")/lib/markdown.sh"
 
 #######################################
 # Lists the anchors that GitHub generates for the ATX headings of a Markdown
@@ -172,29 +153,72 @@ check_file() {
 }
 
 #######################################
-# Checks every Markdown file under ROOT, except .git/.
+# Prints an error and exits with status 2.
 # Arguments:
-#   $1  repository root; defaults to the current directory
+#   $1  message
+# Example:
+#   fail_to_run "missing: not a directory"
+#######################################
+fail_to_run() {
+  echo "check-links: $1" >&2
+  exit 2
+}
+
+#######################################
+# Lists the Markdown files to check under the current directory, sorted,
+# one per line. Inside a git work tree, they are the files git lists,
+# tracked or not, except those it ignores and tracked files deleted from
+# the working tree; outside one, every Markdown file except those in .git/.
+# Exits with status 2 when git fails for any reason other than the
+# directory not being in a repository, such as "dubious ownership".
+# Arguments:
+#   $1  directory for git's output and errors
+# Outputs:
+#   one path per line, relative to the current directory, on stdout
+# Example:
+#   markdown_files "$work_dir" >"$work_dir/list"
+#######################################
+markdown_files() {
+  local dir=$1 file
+  if LC_ALL=C git rev-parse --is-inside-work-tree >/dev/null 2>"$dir/git-error"; then
+    LC_ALL=C git ls-files -z --cached --others --exclude-standard -- '*.md' \
+      >"$dir/git-files" 2>"$dir/git-error" \
+      || fail_to_run "git cannot list the files: $(cat "$dir/git-error")"
+    while IFS= read -r -d '' file; do
+      if [[ -f $file ]]; then printf '%s\n' "$file"; fi
+    done <"$dir/git-files"
+  elif grep -q 'not a git repository' "$dir/git-error"; then
+    find . -name '*.md' -not -path './.git/*' | sed 's#^\./##'
+  else
+    fail_to_run "git cannot tell whether this is a repository: $(cat "$dir/git-error")"
+  fi | LC_ALL=C sort -u
+}
+
+#######################################
+# Checks every Markdown file under ROOT that markdown_files lists.
+# Arguments:
+#   $1  directory to check; defaults to the current directory
 # Outputs:
 #   the broken links, or a success line, on stdout
 # Returns:
-#   0 when every link resolves, 1 otherwise; exits with 2 when ROOT is not
-#   a directory
+#   0 when every link resolves, 1 otherwise; exits with 2 when the check
+#   cannot run
 # Example:
 #   main .
 #######################################
 main() {
-  (($# <= 1)) || { echo "usage: scripts/check-links.sh [ROOT]" >&2; exit 2; }
-  local root=${1:-.} status=0 file
-  if [[ ! -d $root ]]; then
-    echo "check-links: $root: not a directory" >&2
-    exit 2
-  fi
+  (($# <= 1)) || fail_to_run "usage: scripts/check-links.sh [ROOT]"
+  local root=${1:-.} status=0 file work_dir
+  [[ -d $root ]] || fail_to_run "$root: not a directory"
   cd "$root"
+  work_dir=$(mktemp -d "${TMPDIR:-/tmp}/check-links.XXXXXX")
+  # Expanded now: work_dir is local to main and gone when the EXIT trap runs.
+  trap "rm -rf $(printf '%q' "$work_dir")" EXIT
+  markdown_files "$work_dir" >"$work_dir/list" || exit 2
+  [[ -s $work_dir/list ]] || fail_to_run "no Markdown file found"
   while IFS= read -r file; do
     check_file "$file" || status=1
-  done < <(find . -name '*.md' -not -path './.git/*' \
-    | sed 's#^\./##' | sort)
+  done <"$work_dir/list"
   if ((status == 0)); then
     echo "All relative links resolve."
   fi

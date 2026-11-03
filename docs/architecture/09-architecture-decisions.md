@@ -1,8 +1,8 @@
 # 9. Architecture decisions
 
-The significant architectural decisions of this repository, one ADR each in `docs/adr/`, written with the full template of [MADR 4.0.0](https://github.com/adr/madr/releases/tag/4.0.0), as the framework's [CONVENTIONS](../../framework/CONVENTIONS.md#adrs) asks. The status and the date of each decision are at the top of its ADR.
+The significant architectural decisions of this repository, one ADR each in `docs/adr/`, written with the full template of [MADR 4.0.0](https://github.com/adr/madr/releases/tag/4.0.0), as the framework's [CONVENTIONS](../../framework/CONVENTIONS.md#adrs) asks. The status of each decision, and the date its ADR was last updated, are at the top of the ADR.
 
-ADRs 0001 to 0003 record decisions made before this repository followed the framework, and ADR 0004 one made after, while this section was still `draft`. Those four were written afterwards, on 2026-10-14, each with the date on which its decision was made; ADRs 0005 and 0006 were written when their decisions were made.
+ADRs 0001 to 0003 record decisions made before this repository followed the framework, which the framework does not require, and ADR 0004 one made after, while this section was still `draft`. Those four were written afterwards, on 2026-10-14, and each says so, with the date of its decision, in its "More Information" section; the other ADRs were written when their decisions were made.
 
 | ADR | Decision |
 |---|---|
@@ -12,3 +12,8 @@ ADRs 0001 to 0003 record decisions made before this repository followed the fram
 | [0004](../adr/0004-semantic-versioning-of-framework-tags.md) | Number framework tags with Semantic Versioning, against a declared public API |
 | [0005](../adr/0005-evidence-of-need.md) | State what shows that adopters need a change to the framework |
 | [0006](../adr/0006-adr-triggers-as-should.md) | State which decisions are significant architectural decisions, with `SHOULD` |
+| [0007](../adr/0007-check-from-a-clone-of-the-framework.md) | Check adopters' copies and links from a clone of the framework |
+| [0008](../adr/0008-copies-differ-only-where-the-rendering-stays-the-same.md) | Let copies differ only where the rendered document stays the same |
+| [0009](../adr/0009-no-adrs-required-for-decisions-before-adoption.md) | Exempt ADRs of decisions made before adoption |
+| [0010](../adr/0010-which-change-makes-a-decision-and-how-an-adr-changes.md) | Define which change makes a decision, and how an accepted ADR changes |
+| [0011](../adr/0011-bcp-14-keywords-outside-the-ietf-scope.md) | Use BCP 14 keywords outside the IETF scope, and state them once per adopter |
