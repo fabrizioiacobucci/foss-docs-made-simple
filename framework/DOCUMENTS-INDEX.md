@@ -30,7 +30,7 @@ Which project documents an adopter needs at each level, what each contains, what
 | `CHECKLIST` | `CHECKLIST.md` | MUST: a copy of the framework document of the same name, at the adopted framework tag, as [Files](#files) allows |
 | `DEFINITION-OF-DONE` | `DEFINITION-OF-DONE.md` | MUST: a copy of the framework document of the same name, at the adopted framework tag, as [Files](#files) allows |
 | arc42 section 8 | `08-crosscutting-concepts.md` | MUST: the crosscutting concepts the software has, at least its test strategy and how it is built and deployed; a link to `CONTRIBUTING` for how to run the tests. Required at passing because it holds the test strategy |
-| arc42 section 9 | `09-architecture-decisions.md` and `docs/adr/` | MUST: one ADR per significant architectural decision, written when the decision is made; section 9 lists the ADRs and links to them. Required at passing because an ADR costs least when the decision is made |
+| arc42 section 9 | `09-architecture-decisions.md` and `docs/adr/` | MUST: one ADR per significant architectural decision made since the adopter first recorded its level in its `CHECKLIST`, written when the decision is made, in the change that makes it ([CONVENTIONS](CONVENTIONS.md#adrs)); section 9 lists the ADRs and links to them. MAY: ADRs of decisions made before then, which are not required; a statement in section 9 that those decisions have none. Required at passing because an ADR costs least when the decision is made |
 
 ## Silver
 
