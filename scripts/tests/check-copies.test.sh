@@ -25,7 +25,7 @@ readonly VALID_LOG='| 2026-10-14 | Level set to passing | Adoption |'
 checklist() {
   printf '# Checklist\n\n## Level\n\nLevel: %s\n\n## Register\n\n| Document | Status | Reviewed |\n|---|---|---|\n' "$1"
   [[ -z $2 ]] || printf '%s\n' "$2"
-  printf '\n- **Status** MUST be one of `draft`, `active` or `retired`.\n\n## Log\n\n| Date | Entry | Reason |\n|---|---|---|\n'
+  printf '\n- **Status** MUST be one of:\n  - `draft`: the document is missing;\n  - `active`: the document holds what the level requires.\n\n## Log\n\n| Date | Entry | Reason |\n|---|---|---|\n'
   [[ -z $3 ]] || printf '%s\n' "$3"
   printf '\n## Links\n\n[governance]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/%s/framework/GOVERNANCE.md\n' "$4"
 }
@@ -174,7 +174,8 @@ test_reports_a_changed_rule_in_a_copy() {
   run_copies
   assert_status 1
   assert_stdout_has "docs/DEFINITION-OF-DONE.md differs from framework/DEFINITION-OF-DONE.md at v0.1.0:"
-  assert_stdout_has "+- A release SHOULD NOT be made"
+  assert_stdout_has "-MUST"
+  assert_stdout_has "+SHOULD"
 }
 
 test_reports_a_changed_form_in_the_checklist_copy() {
@@ -261,6 +262,92 @@ test_rejects_a_row_without_three_columns() {
   make_adopter
   expect_rejected passing '| `README` | `active` |' "" 'row has 2 columns instead of 3'
   expect_rejected passing "$VALID_REGISTER" '| 2026-10-14 | Level raised | Criteria met | Extra |' 'row has 4 columns instead of 3'
+}
+
+#######################################
+# Prints a CHECKLIST copy at v0.1.0, with valid values, in the layout that
+# Prettier gives it: padded table cells and separators, and nested list
+# items indented by the given number of spaces.
+# Arguments:
+#   $1  indentation of the nested list items, such as 2 or 4
+# Outputs:
+#   the document, on stdout
+# Example:
+#   formatted_checklist 4 >docs/CHECKLIST.md
+#######################################
+formatted_checklist() {
+  local indent
+  indent=$(printf '%*s' "$1" '')
+  cat <<DOC
+# Checklist
+
+## Level
+
+Level: passing
+
+## Register
+
+| Document        | Status   | Reviewed   |
+| --------------- | -------- | ---------- |
+| \`README\`        | \`active\` | 2026-10-14 |
+| arc42 section 9 | \`draft\`  |            |
+
+- **Status** MUST be one of:
+${indent}- \`draft\`: the document is missing;
+${indent}- \`active\`: the document holds what the level requires.
+
+## Log
+
+| Date       | Entry                | Reason   |
+| ---------- | -------------------- | -------- |
+| 2026-10-14 | Level set to passing | Adoption |
+
+## Links
+
+[governance]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.1.0/framework/GOVERNANCE.md
+DOC
+}
+
+test_accepts_copies_in_the_layout_of_a_formatter() {
+  make_adopter
+  local indent
+  for indent in 2 4; do
+    formatted_checklist "$indent" >docs/CHECKLIST.md
+    run_copies
+    assert_status 0
+  done
+}
+
+test_accepts_a_copy_with_its_paragraphs_rewrapped() {
+  make_adopter
+  printf '# Definition of Done\n\n- A release MUST NOT be made while a required\n  document is missing ([DOCUMENTS-INDEX][index]).\n\n[index]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.1.0/framework/DOCUMENTS-INDEX.md\n' >docs/DEFINITION-OF-DONE.md
+  run_copies
+  assert_status 0
+}
+
+test_reports_a_heading_joined_to_its_marker() {
+  make_adopter
+  edit docs/CHECKLIST.md 's/^## Register$/##Register/; s/| `README` | `active` |/| `README` | `done` |/'
+  run_copies
+  assert_status 1
+  assert_stdout_has "docs/CHECKLIST.md differs"
+  assert_stdout_has "+##Register"
+}
+
+test_reports_a_link_definition_joined_to_the_paragraph_before() {
+  make_adopter
+  printf '# Definition of Done\n\n- A release MUST NOT be made while a required document is missing ([DOCUMENTS-INDEX][index]).\n[index]: https://github.com/fabrizioiacobucci/foss-docs-made-simple/blob/v0.1.0/framework/DOCUMENTS-INDEX.md\n' >docs/DEFINITION-OF-DONE.md
+  run_copies
+  assert_status 1
+  assert_stdout_has "docs/DEFINITION-OF-DONE.md differs"
+}
+
+test_reports_a_list_item_merged_into_the_one_before() {
+  make_adopter
+  awk '/^  - `active`/ { sub(/^  - /, ""); printf " %s\n", $0; next } /^  - `draft`/ { printf "%s", $0; next } { print }' docs/CHECKLIST.md >merged && mv merged docs/CHECKLIST.md
+  run_copies
+  assert_status 1
+  assert_stdout_has "docs/CHECKLIST.md differs"
 }
 
 test_cannot_run_without_a_single_valid_tag_in_the_readme() {

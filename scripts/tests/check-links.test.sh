@@ -242,8 +242,7 @@ test_checks_only_the_given_folder_of_a_repository() {
 test_cannot_run_when_git_fails_inside_a_repository() {
   fixture_git init -q
   write README.md <<<'# Project'
-  printf '[core
-' >.git/config
+  printf '[core\n' >.git/config
   run_check check-links.sh
   assert_status 2
   assert_stderr_has "check-links: git cannot tell whether this is a repository"

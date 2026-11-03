@@ -24,6 +24,7 @@ Known gaps, which no check covers yet:
 - links to other sites, including the links at the adopted framework tag, which resolve only once the tag is published;
 - whether the register lists every required document;
 - copies of the framework documents kept in two directories, which `scripts/check-copies.sh` cannot read;
+- a nested list made flat, or a code block made by indentation, in a copy of a framework document, which `scripts/check-copies.sh` does not detect, though [DOCUMENTS-INDEX](../../framework/DOCUMENTS-INDEX.md#files) does not let a copy change them ([ADR 0008](../adr/0008-copies-differ-only-where-the-rendering-stays-the-same.md));
 - file names written in inline code, such as a README that names a file that does not exist, which no script reads ([ADR 0007](../adr/0007-check-from-a-clone-of-the-framework.md)).
 
 ## Release

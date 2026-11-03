@@ -7,6 +7,7 @@ Which project documents an adopter needs at each level, what each contains, what
 - GitHub community files (`README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `ACCESSIBILITY.md`) MUST be in the repository root, in `.github/` or in `docs/`, where GitHub finds them.
 - The licence texts MUST be in `LICENSE` in the repository root or, when the adopter follows REUSE, in `LICENSES/`.
 - An adopter MAY place its other project documents anywhere in its repository. The framework's default layout is `docs/` for project documents, `docs/architecture/` for arc42 sections, one file per section, and `docs/adr/` for ADRs.
+- Besides `TAG` replaced by the adopted framework tag and the values filled in, a copy of a framework document MAY differ from the framework document only where the rendered document stays the same: the spaces around the content of table cells; the number of hyphens and spaces in the separator row of a table; the indentation of list items, as long as their nesting stays the same; and line breaks inside a paragraph or a list item.
 
 ## Reading the tables
 
@@ -26,8 +27,8 @@ Which project documents an adopter needs at each level, what each contains, what
 | `CHANGELOG` | `CHANGELOG.md` | MUST: release notes, written as [CONVENTIONS](CONVENTIONS.md) requires; or, when [DEFINITION-OF-DONE](DEFINITION-OF-DONE.md) lets the adopter omit release notes, a statement that the software is delivered continuously without them |
 | `REFERENCE` | `REFERENCE.md` | MUST: the external interface of the software, input and output: API, command line, configuration, file formats; the public API, as [CONVENTIONS](CONVENTIONS.md) defines it |
 | `GOVERNANCE` | `GOVERNANCE.md` | MUST: who holds each framework role; a "Documentation" section that links the framework's [GOVERNANCE](GOVERNANCE.md) at the adopted framework tag and lists the adopter's additions. Required at passing, before the badge asks for a governance document at silver, so that the role holders and the additions have one place at every level |
-| `CHECKLIST` | `CHECKLIST.md` | MUST: a copy of the framework document of the same name, at the adopted framework tag |
-| `DEFINITION-OF-DONE` | `DEFINITION-OF-DONE.md` | MUST: a copy of the framework document of the same name, at the adopted framework tag |
+| `CHECKLIST` | `CHECKLIST.md` | MUST: a copy of the framework document of the same name, at the adopted framework tag, as [Files](#files) allows |
+| `DEFINITION-OF-DONE` | `DEFINITION-OF-DONE.md` | MUST: a copy of the framework document of the same name, at the adopted framework tag, as [Files](#files) allows |
 | arc42 section 8 | `08-crosscutting-concepts.md` | MUST: the crosscutting concepts the software has, at least its test strategy and how it is built and deployed; a link to `CONTRIBUTING` for how to run the tests. Required at passing because it holds the test strategy |
 | arc42 section 9 | `09-architecture-decisions.md` and `docs/adr/` | MUST: one ADR per significant architectural decision, written when the decision is made; section 9 lists the ADRs and links to them. Required at passing because an ADR costs least when the decision is made |
 

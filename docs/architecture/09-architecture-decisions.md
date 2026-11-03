@@ -13,3 +13,4 @@ ADRs 0001 to 0003 record decisions made before this repository followed the fram
 | [0005](../adr/0005-evidence-of-need.md) | State what shows that adopters need a change to the framework |
 | [0006](../adr/0006-adr-triggers-as-should.md) | State which decisions are significant architectural decisions, with `SHOULD` |
 | [0007](../adr/0007-check-from-a-clone-of-the-framework.md) | Check adopters' copies and links from a clone of the framework |
+| [0008](../adr/0008-copies-differ-only-where-the-rendering-stays-the-same.md) | Let copies differ only where the rendered document stays the same |

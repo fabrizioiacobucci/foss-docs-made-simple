@@ -2,12 +2,14 @@
 # Checks that a project's copies of the copied framework documents,
 # CHECKLIST.md and DEFINITION-OF-DONE.md, match framework/ in a clone of the
 # framework at the framework tag that the project's README states, except
-# for TAG replaced by that tag and, in the CHECKLIST, the values filled in;
-# and that those values have a valid form: the level, each register row
-# (document name, status, date) and each log date, as the framework's
-# CHECKLIST defines them at v0.1.0 and v0.2.0. It does not check that the
-# register lists every required document. Carriage returns and a missing
-# final newline are ignored.
+# for TAG replaced by that tag, the layout that the framework's
+# DOCUMENTS-INDEX lets a copy change and, in the CHECKLIST, the values
+# filled in; and that those values have a valid form: the level, each
+# register row (document name, status, date) and each log date, as the
+# framework's CHECKLIST defines them at v0.1.0 and v0.2.0. It does not check
+# that the register lists every required document. Carriage returns and a
+# missing final newline are ignored. The copies are compared word by word,
+# and the differences are shown on the same word lists.
 #
 # The README is the first of README.md, .github/README.md and docs/README.md
 # under ROOT, as GitHub reads them. The script needs it to state the tag
@@ -17,10 +19,13 @@
 # not a framework rule. The tag is read from the clone, which must hold it:
 # the script never uses the network. When ROOT is the clone itself and the
 # tag does not exist yet, as before a framework release, framework/ in its
-# working tree is the reference, with a warning.
+# working tree is the reference, with a warning. A script from a newer tag
+# also applies its layout tolerance to copies of earlier tags.
 #
-# Known gaps: both copies must be in one directory; the script finds
-# scripts/lib/ next to itself, so a symbolic link to it is not supported.
+# Known gaps: both copies must be in one directory; a nested list made flat
+# and a code block made by indentation are not detected, though the
+# framework does not let a copy change them; the script finds scripts/lib/
+# next to itself, so a symbolic link to it is not supported.
 #
 # Usage: scripts/check-copies.sh [--framework DIR] [--docs DIR] [ROOT]
 #   --framework DIR  clone of the framework to read the framework documents
@@ -169,13 +174,20 @@ framework_document() {
 }
 
 #######################################
-# Prints a document with carriage returns removed and a final newline,
-# blanking the filled-in values when it is a CHECKLIST: the value of the
-# "Level: " line and the data rows of its tables.
+# Prints a document as the list of its words, one per line, so that two
+# documents compare equal when they differ only where the rendered document
+# stays the same, as the framework's DOCUMENTS-INDEX allows for copies:
+# spaces around table cells, hyphens and spaces in table separators, list
+# indentation and line breaks inside a paragraph or a list item. Carriage
+# returns are removed and, in a CHECKLIST, the filled-in values are blanked
+# first: the value of the "Level: " line and the data rows of its tables.
+# A blank line marks where a block starts: after a blank line, or at a list
+# item, heading, table row or quote, which can interrupt a paragraph; so
+# joining two blocks, or a link definition to a paragraph, is reported.
 # Arguments:
 #   $1  file name, such as CHECKLIST.md; reads the document on stdin
 # Outputs:
-#   the normalised document, on stdout
+#   the words, one per line, on stdout
 # Example:
 #   normalise CHECKLIST.md <docs/CHECKLIST.md
 #######################################
@@ -188,6 +200,26 @@ normalise() {
     blank_values && $0 ~ separator { print; in_rows = 1; next }
     blank_values && in_rows && /^[|]/ { next }
     { in_rows = 0; print }
+  ' | awk '
+    {
+      line = $0
+      gsub(/[ \t]+/, " ", line)
+      sub(/^ /, "", line)
+      sub(/ $/, "", line)
+    }
+    line == "" { block_start = 1; next }
+    line ~ /^[|]/ {
+      gsub(/ ?[|] ?/, "|", line)
+      if (line ~ /^[|:-]+$/) gsub(/-+/, "-", line)
+    }
+    line ~ /^([-*+]|[0-9]+[.)])( |$)/ || line ~ /^(#|[|]|>)/ { block_start = 1 }
+    {
+      if (block_start && printed) print ""
+      block_start = 0
+      count = split(line, words, " ")
+      for (i = 1; i <= count; i++) print words[i]
+      printed = 1
+    }
   '
 }
 
